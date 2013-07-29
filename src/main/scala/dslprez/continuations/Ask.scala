@@ -2,24 +2,25 @@ package dslprez.continuations
 
 import scala.util.continuations._
 
-class Ask {
+object Ask {
 
 var cont: Unit => Unit = _
+var lastAnswer: String = _
 
-def ask(query:String,answer:String):String @cps[Unit] = {
+def ask(query:String):String @cps[Unit] = {
 shift { 
    k: (Unit => Unit) => 
       cont = k; 
       println(query)
-} 
-      answer
+      } 
+      lastAnswer
 }
 
 def start(f: => Unit @cps[Unit])  = {
  reset {
     f
-     }
+  }
 }
 
-def callCont = cont()
+def answer(answer:String) = {lastAnswer= answer; cont() }
 }
