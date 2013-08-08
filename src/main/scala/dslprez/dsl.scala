@@ -70,6 +70,8 @@ class Turtle(position:Position) {
       currentDirection = Some(d)
       this
    }
+   
+   def changeOrientation(newOrientation:Direction) = steps = Stream(steps.head.copy(d=newOrientation)) ++ steps 
   
    def by(s:Step) = {
       for (d <- currentDirection; i <- 1 until s.i) move(d)
