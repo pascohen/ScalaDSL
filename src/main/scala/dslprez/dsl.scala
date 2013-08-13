@@ -109,7 +109,7 @@ package dslprez {
       }
     }
 
-    def print(what: Stream[Position]) = new StreamPrinter(what)
+    def print(what: Stream[Position]=steps) = new StreamPrinter(what)
   }
 
   sealed trait PrintingMode
