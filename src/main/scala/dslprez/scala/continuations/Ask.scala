@@ -19,7 +19,7 @@ class Ask {
 
    // Starts the DSL - basically a set of DSL rules
    // with ask and waiting for answer to continue
-   def start(f: => Unit @cps[Unit])  = {
+   def start(f: => Any @cps[Unit])  = {
       reset {
          f
       }
@@ -28,6 +28,8 @@ class Ask {
    // get back into the DSL flow by calling the stored continuation
    def answer(answer:String) = {
 	if (!cont.isEmpty) cont.get(answer) 
-        cont=None
+        //cont=None
    }
+   
+   def end = cont=None
 }

@@ -3,6 +3,8 @@ package dslprez.scala.slides
 // Avoid warning
 import scala.language.implicitConversions
 
+import scala.util.continuations._
+
 // Sealed Directions - could be an Enum
 sealed trait Direction
 case object left extends Direction
@@ -35,6 +37,8 @@ case class Position(x: Int, y: Int, d: Direction) {
  */
 class Turtle(position: Position) {
 
+  val myAsk = new dslprez.scala.continuations.Ask
+  
   var steps = position #:: Stream.empty
 
   var newStepsCount = 0
@@ -90,6 +94,18 @@ class Turtle(position: Position) {
   }
 
   def print(what: Stream[Position]=steps) = new StreamPrinter(what)
+  
+  def ask(question: String) = myAsk.ask(question)
+  
+}
+
+object Turtle {
+  def answer(answer: String)(implicit t: Turtle) = t.myAsk.answer(answer)
+  
+  def startDsl(dsl: => Unit @cps[Unit])(implicit t: Turtle) = t.myAsk.start(dsl)
+  
+  def end(implicit t: Turtle) = t.myAsk.end
+
 }
 
 sealed trait PrintingMode
