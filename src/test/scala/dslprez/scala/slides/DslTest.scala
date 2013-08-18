@@ -1,4 +1,4 @@
-package dslprez
+package dslprez.scala.slides
 
 import org.scalatest._
 
@@ -84,6 +84,6 @@ class DslTest extends org.scalatest.FlatSpec {
       t move up
       t move right
       val expectedJson = "{\"steps\":[{\"direction\":\"up\",\"x\":0,\"y\":0},{\"direction\":\"up\",\"x\":0,\"y\":1},{\"direction\":\"right\",\"x\":1,\"y\":1}]}"
-      assert(t.stepsToJson==expectedJson)  
+      assert(t.print(t.steps).to(JSon)==expectedJson)  
     }
 }

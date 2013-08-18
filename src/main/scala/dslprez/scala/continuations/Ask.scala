@@ -1,10 +1,8 @@
-package dslprez.continuations
+package dslprez.scala.continuations
 
 import scala.util.continuations._
 
-// Should be better with a class
-// Simpler for demo
-object Ask {
+class Ask {
 
    // The continuation
    var cont: Option[String => Unit] = None

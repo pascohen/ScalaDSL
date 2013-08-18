@@ -1,4 +1,4 @@
-package dslprez.timer
+package dslprez.scala.timer
 
 object MyTimer {
   
