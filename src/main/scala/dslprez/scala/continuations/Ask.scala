@@ -19,7 +19,7 @@ class Ask {
 
    // Starts the DSL - basically a set of DSL rules
    // with ask and waiting for answer to continue
-   def start(f: => Any @cps[Unit])  = {
+   def start(f: => Unit @cps[Unit])  = {
       reset {
          f
       }
