@@ -3,28 +3,7 @@ package dslprez.scala.game
 // Avoid warning
 import scala.language.implicitConversions
 
-// Sealed Directions - could be an Enum
-sealed trait Direction
-case object left extends Direction
-case object right extends Direction
-case object up extends Direction
-case object down extends Direction
-
-// Steps class mainly for readability
-case class Step(i: Int) {
-  def steps = this
-}
-
-/**
- * Position contains position but also turtle
- * orientation
- */
-case class Position(x: Int, y: Int, d: Direction) {
-  def left = Position(x - 1, y, dslprez.scala.game.left)
-  def right = Position(x + 1, y, dslprez.scala.game.right)
-  def up = Position(x, y + 1, dslprez.scala.game.up)
-  def down = Position(x, y - 1, dslprez.scala.game.down) 
-}
+import scala.util.continuations._
 
 /**
  * Turtle
@@ -33,8 +12,16 @@ case class Position(x: Int, y: Int, d: Direction) {
  * and while and until
  * plus a helper to generate JSon output
  */
-class Turtle(position: Position) {
+class Turtle(val name:String, val image: String, val maze:Set[(Int,Int)], position: Position) {
 
+  def this(name:String, image: String, maze:Array[Array[Int]], position: Position) =
+    this(name,image,toSet(maze),position)
+    
+    //def result = [:]
+    //def i = 1;
+
+  val myAsk = new dslprez.scala.continuations.Ask
+  
   var steps = position #:: Stream.empty
 
   var newStepsCount = 0
@@ -66,7 +53,7 @@ class Turtle(position: Position) {
   }
 
   def changeOrientation(newOrientation: Direction) = {
-    steps = Stream(steps.head.copy(d = newOrientation)) ++ steps
+    steps = Stream(steps.head.copy(direction = newOrientation)) ++ steps
     newStepsCount += 1
     this
   }
@@ -89,8 +76,17 @@ class Turtle(position: Position) {
     this
   }
 
-  def print(what: Stream[Position]=steps) = new StreamPrinter(what)
+  def print(what: Stream[Position]=steps) = new StreamPrinter(what,this)
+ 
+  def ask(question: String) = myAsk.ask(question)
+  
 }
 
-sealed trait PrintingMode
-case object JSon extends PrintingMode
+object Turtle {
+  def answer(answer: String)(implicit t: Turtle) = t.myAsk.answer(answer)
+  
+  def startDsl(dsl: => Unit @cps[Unit])(implicit t: Turtle) = t.myAsk.start(dsl)
+  
+  def end(implicit t: Turtle) = t.myAsk.end
+
+}

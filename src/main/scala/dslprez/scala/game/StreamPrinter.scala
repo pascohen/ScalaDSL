@@ -7,14 +7,14 @@ import net.liftweb.json.JsonDSL._
 // Avoid warning
 import scala.language.implicitConversions
 
-class StreamPrinter(val stream: Stream[Position]) {
+class StreamPrinter(val stream: Stream[Position],val t: Turtle) {
 
-  implicit def toJsonValue(p: Position) = ("direction" -> p.d.toString) ~ ("x" -> p.x) ~ ("y" -> p.y)
+  implicit def toJsonValue(p: Position) = ("direction" -> p.direction.toString) ~ ("x" -> p.x) ~ ("y" -> p.y)
   
-  def stepsToJson(positions: Stream[Position]) = compact(render("steps" -> positions))
+  def stepsToJson = compact(render(("name"->t.name)~("image"->t.image)~("steps" -> stream.reverse)~("asks"->List[String]())))
 
   def to(p: PrintingMode) = p match {
-    case _:JSon.type => stepsToJson(stream.reverse)
+    case _:JSon.type => stepsToJson
     case _ => ()
   }
 }
