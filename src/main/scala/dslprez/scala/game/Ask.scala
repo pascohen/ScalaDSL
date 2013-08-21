@@ -41,7 +41,7 @@ class Notifier(private val groovyInstance:Object, var t:Turtle) {
     m.invoke(groovyInstance,query)
   }
   
-  def notifiy(answer:String) {
+  def notify(answer:String) {
     t.answer(answer)
     }
     
