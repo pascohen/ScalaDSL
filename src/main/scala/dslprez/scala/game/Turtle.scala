@@ -12,14 +12,10 @@ import scala.util.continuations._
  * and while and until
  * plus a helper to generate JSon output
  */
-class Turtle(val name:String, val image: String, val maze:Set[(Int,Int)], position: Position) {
+class Turtle(val name:String, val image: String, position: Position,val maze:Set[(Int,Int)]) {
 
-  def this(name:String, image: String, maze:Array[Array[Int]], position: Position) =
-    this(name,image,toSet(maze),position)
-    
-    //def result = [:]
-    //def i = 1;
-
+  def this(name:String, image: String, position: Position, maze:Array[Array[Int]])  =  this(name,image,position,toSet(maze))
+   
   val myAsk = new dslprez.scala.continuations.Ask
   
   var steps = position #:: Stream.empty
@@ -31,7 +27,14 @@ class Turtle(val name:String, val image: String, val maze:Set[(Int,Int)], positi
     newStepsCount = 0
     newStepsStream
   }
+   
+  def getNewStepsAsJavaMap = this.print(newSteps).to(JavaMap)
+  
+  def getNewAsks = List[String]()
 
+  def getNewAsksAsJavaList = new java.util.ArrayList[String]()
+
+  
   def lastPosition = steps.head
 
   // Used to manage the by/while/until
@@ -88,5 +91,5 @@ object Turtle {
   def startDsl(dsl: => Unit @cps[Unit])(implicit t: Turtle) = t.myAsk.start(dsl)
   
   def end(implicit t: Turtle) = t.myAsk.end
-
+  
 }

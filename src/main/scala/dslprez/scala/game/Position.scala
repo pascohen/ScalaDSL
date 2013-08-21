@@ -5,10 +5,13 @@ package dslprez.scala.game
  * orientation
  */
 case class Position(x: Int, y: Int, rotation: Int, direction: Direction) {
-  def left = Position(x - 1, y, -90, dslprez.scala.game.left)
+
+  def left =  Position(x - 1, y, -90, dslprez.scala.game.left)
   def right = Position(x + 1, y, 90, dslprez.scala.game.right)
-  def up = Position(x, y + 1, 0, dslprez.scala.game.up)
-  def down = Position(x, y - 1, 180, dslprez.scala.game.down) 
+  def up =    Position(x, y + 1, 0, dslprez.scala.game.up)
+  def down =  Position(x, y - 1, 180, dslprez.scala.game.down) 
+  
+  def toMapStructure = Map("x"->x,"y"->y,"rotation"->rotation,"direction"->direction.asString)    
 }
 
 object Position {
@@ -30,4 +33,16 @@ object Position {
   
   def generateRandomPositionFromJava(gridSize:Int, walls:Array[Array[Int]]):Position =
     generateRandomPosition(gridSize,toSet(walls))
+    
+  def getDirection(s:String) = s match {
+    case "+x" => dslprez.scala.game.right
+    case "-x" => dslprez.scala.game.left
+    case "+y" => dslprez.scala.game.up
+    case "-y" => dslprez.scala.game.down
+    case _ => dslprez.scala.game.up
+  }
+  
+  def getPosition(x: Int, y: Int, rotation: Int, dir:String) = Position(x,y,rotation,getDirection(dir))
+
 }
+

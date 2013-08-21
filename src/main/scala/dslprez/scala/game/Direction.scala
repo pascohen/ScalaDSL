@@ -1,8 +1,22 @@
 package dslprez.scala.game
 
 // Sealed Directions - could be an Enum
-sealed trait Direction
-case object left extends Direction
-case object right extends Direction
-case object up extends Direction
-case object down extends Direction
+sealed trait Direction {
+  def asString:String 
+}
+
+case object left extends Direction {
+  val asString = "-x"
+}
+
+case object right extends Direction {
+  val asString = "+x"
+}
+
+case object up extends Direction {
+  val asString = "+y"
+}
+
+case object down extends Direction {
+  val asString = "-y"
+}
