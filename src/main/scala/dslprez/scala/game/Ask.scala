@@ -2,7 +2,7 @@ package dslprez.scala.game
 
 import scala.util.continuations._
 
-class Ask(private val notifier:Notifier) {
+class Ask(notifier:Notifier) {
 
    // The continuation
    var cont: Option[String => Unit] = None
@@ -30,20 +30,8 @@ class Ask(private val notifier:Notifier) {
    def answer(answer:String) = {
 	if (!cont.isEmpty) cont.get(answer) 
         //cont=None
+        notifier.notify(answer)
    }
    
    def end = cont=None
-}
-
-class Notifier(private val groovyInstance:Object, var t:Turtle) {
-  def emit(query:String) = {
-    val m = groovyInstance.getClass.getMethod("waitForAnswer",classOf[Object])
-    m.invoke(groovyInstance,query)
-  }
-  
-  def notify(answer:String) {
-    t.answer(answer)
-    }
-    
-  def setTurtle(t:Turtle) = this.t = t
 }

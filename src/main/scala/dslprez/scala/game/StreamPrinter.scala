@@ -11,19 +11,10 @@ import scala.language.implicitConversions
 
 class StreamPrinter(val stream: Stream[Position],val t: Turtle) {
 
-  implicit def toJsonValue(p: Position) = ("direction" -> p.direction.toString) ~ ("x" -> p.x) ~ ("y" -> p.y)
-  
   def toJavaList(l:List[Position]) = l.map(p => p.toMapStructure.asJava).asJava
   
-  def stepsToJson = compact(render(("name"->t.name)~("image"->t.image)~("steps" -> stream.reverse)~("asks"->List[String]())))
-  def stepsToMap = Map("name"->t.name,
-                       "image"->t.image,
-                       "steps"->toJavaList(stream.reverse.toList),
-                       "asks"->t.getNewAsks.asJava).asJava
-  
   def to(p: PrintingMode) = p match {
-    case _:JSon.type => stepsToJson
-    case `JavaMap` => stepsToMap
+    case `JavaList` => toJavaList(stream.reverse.toList)
     case _ => ()
   }
 }

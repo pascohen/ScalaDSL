@@ -17,14 +17,13 @@ import scala.util.continuations._
  * and while and until
  * plus a helper to generate JSon output
  */
-class Turtle(val name:String, val image: String, position: Position,val maze:Set[(Int,Int)], notifier:Notifier) {
+class Turtle(val name:String, val image: String, position: Position,val maze:Set[(Int,Int)], notifier: Notifier) {
 
-  def this(name:String, image: String, position: Position, maze:Array[Array[Int]], notifier:Notifier)  =  this(name,image,position,toSet(maze),notifier)
+  def this(name:String, image: String, position: Position, maze:Array[Array[Int]], groovyInstance: Object)  =  this(name,image,position,toSet(maze), new Notifier(groovyInstance))
    
   val myAsk = new Ask(notifier)
   
   var steps = position #:: Stream.empty
-  val questions = MutMap[String,String]()
   
   var newStepsCount = 0
 
@@ -34,18 +33,7 @@ class Turtle(val name:String, val image: String, position: Position,val maze:Set
     newStepsStream
   }
    
-  def getNewStepsAsJavaMap = this.print(newSteps).to(JavaMap)
-  
-  def getNewAsks = {
-    if (questions.isEmpty) {
-      List()
-    } else {
-      val fAnswer = questions.toList(0)
-      List(Map("_question"->fAnswer._1,"answer"->fAnswer._2))
-    }
-  }
-
-  def getNewAsksAsJavaList = getNewAsks.asJava
+  def getNewStepsAsJavaList = print(newSteps).to(JavaList)
   
   def lastPosition = steps.head
 
@@ -91,39 +79,56 @@ class Turtle(val name:String, val image: String, position: Position,val maze:Set
     this
   }
 
-  def `while`(condition: Position => Boolean) = {
+  /*def `while`(condition: Position => Boolean) = {
     for (d <- currentDirection) while (condition(lastPosition)) move(d)
     currentDirection = None
     this
-  }
+  }*/
 
   def until(condition: Position => Boolean) = {
-    for (d <- currentDirection) do move(d) while (!condition(lastPosition))
+    for (d <- currentDirection) while (!condition(lastPosition)) move(d)
     currentDirection = None
     this
   }
 
   def print(what: Stream[Position]=steps) = new StreamPrinter(what,this)
- 
+
+  val questions = MutMap[String,String]()
+
   var lastQuestion:Option[String] = None
+  var lastAnswer:Option[String] = None
+
+  def getNewAsksAsJavaList = if (!lastQuestion.isEmpty && !lastAnswer.isEmpty) List(Map("_question"->lastQuestion.get,"answer"->lastAnswer.get).asJava).asJava else List().asJava
+  
+  /*val logWriter = {
+    val logFile = new java.io.File("/tmp/scalaAsk_"+name+".out")
+    new java.io.PrintWriter(logFile, "UTF-8")
+  }*/
   
   def ask(question: String) = {
     lastQuestion = Some(question)
+    
+    //logWriter.println("Question for "+name+" => "+question)
+    //logWriter.flush()
+    
     myAsk.ask(question)
   }
   
   def answer(answer:String) = {
     if (lastQuestion.nonEmpty)  questions.put(lastQuestion.get,answer)
+    lastAnswer = Some(answer)
+    
+    //logWriter.println("Answer to "+name+" for the question "+lastQuestion.getOrElse("noQuestion")+" => "+answer)
+    //logWriter.flush()
+    
     myAsk.answer(answer)
-    lastQuestion = None
   }
 }
 
 object Turtle {
-  def answer(answer: String)(implicit t: Turtle) = t.answer(answer)
   
   def startDsl(dsl: => Unit @cps[Unit])(implicit t: Turtle) = t.myAsk.start(dsl)
   
   def end(implicit t: Turtle) = t.myAsk.end
-  
+   
 }
