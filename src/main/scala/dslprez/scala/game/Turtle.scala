@@ -21,7 +21,7 @@ class Turtle(val name:String, val image: String, position: Position,val maze:Set
 
   def this(name:String, image: String, position: Position, maze:Array[Array[Int]], groovyInstance: Object)  =  this(name,image,position,toSet(maze), new Notifier(groovyInstance))
    
-  val myAsk = new Ask(notifier)
+  val myAsk = new Ask
   
   var steps = position #:: Stream.empty
   
@@ -110,8 +110,7 @@ class Turtle(val name:String, val image: String, position: Position,val maze:Set
     
     //logWriter.println("Question for "+name+" => "+question)
     //logWriter.flush()
-    
-    myAsk.ask(question)
+    myAsk.ask(question, notifier)
   }
   
   def answer(answer:String) = {
@@ -121,7 +120,11 @@ class Turtle(val name:String, val image: String, position: Position,val maze:Set
     //logWriter.println("Answer to "+name+" for the question "+lastQuestion.getOrElse("noQuestion")+" => "+answer)
     //logWriter.flush()
     
-    myAsk.answer(answer)
+    myAsk.answer(answer, notifier)
+  }
+  
+  def end() = {
+    myAsk.end(notifier)
   }
 }
 
@@ -129,6 +132,6 @@ object Turtle {
   
   def startDsl(dsl: => Unit @cps[Unit])(implicit t: Turtle) = t.myAsk.start(dsl)
   
-  def end(implicit t: Turtle) = t.myAsk.end
+  def end(implicit t: Turtle) = t.end()
    
 }
