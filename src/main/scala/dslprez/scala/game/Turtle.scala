@@ -3,12 +3,11 @@ package dslprez.scala.game
 // Avoid warning
 import scala.language.implicitConversions
 
-import scala.collection.mutable.{Map => MutMap}
+import scala.collection.mutable.{ Map => MutMap }
 
 import scala.collection.JavaConverters._
 
 import scala.util.continuations._
-
 
 /**
  * Turtle
@@ -17,23 +16,31 @@ import scala.util.continuations._
  * and while and until
  * plus a helper to generate JSon output
  */
-class Turtle(val name:String, val image: String, position: Position,val maze:Set[(Int,Int)], notifier: Notifier) {
+class Turtle(val name: String, val image: String, position: Position, val maze: Set[(Int, Int)], notifier: Notifier) {
 
-  def this(name:String, image: String, position: Position, maze:Array[Array[Int]], groovyInstance: Object)  =  this(name,image,position,toSet(maze), new Notifier(groovyInstance))
-   
+  def this(name: String, image: String, position: Position, maze: Array[Array[Int]], groovyInstance: Object) = this(name, image, position, toSet(maze), new Notifier(groovyInstance))
+
   val myAsk = new Ask
-  
-  var steps = position #:: Stream.empty
-  
+
+  var steps: Stream[Position] = position #:: Stream.empty
+
   var newStepsCount = 0
 
-  def newSteps = {
+  def newSteps() = {
     val newStepsStream = steps.take(newStepsCount)
     newStepsCount = 0
     newStepsStream
   }
-   
-  def getNewStepsAsJavaList = print(newSteps).to(JavaList)
+
+  def getNewStepsAsJavaList() = print(newSteps).to(JavaList)
+
+  var meetPoint:Option[MeetPosition] = None
+
+  def getMeetPointAsJavaMap() = {
+    val mp = (if(meetPoint.nonEmpty) Map("x"->meetPoint.get.x,"y"->meetPoint.get.y) else Map[String,Int]()).asJava
+    meetPoint = None
+    mp
+  }
   
   def lastPosition = steps.head
 
@@ -43,21 +50,21 @@ class Turtle(val name:String, val image: String, position: Position,val maze:Set
   // at the end this value is reset
   var currentDirection: Option[Direction] = None
 
-  private def canMove(p:Position,d:Direction) = d match {
-      case dslprez.scala.game.left => !maze.contains((p.x-1,p.y)) 
-      case dslprez.scala.game.right => !maze.contains((p.x+1,p.y))
-      case dslprez.scala.game.up => !maze.contains((p.x,p.y+1))
-      case dslprez.scala.game.down => !maze.contains((p.x,p.y-1))
-     
+  private def canMove(p: Position, d: Direction) = d match {
+    case dslprez.scala.game.left => !maze.contains((p.x - 1, p.y))
+    case dslprez.scala.game.right => !maze.contains((p.x + 1, p.y))
+    case dslprez.scala.game.up => !maze.contains((p.x, p.y + 1))
+    case dslprez.scala.game.down => !maze.contains((p.x, p.y - 1))
+
   }
-  
+
   def move(d: Direction) = {
     var hasMoved = true
     d match {
-      case dslprez.scala.game.left if canMove(steps.head,dslprez.scala.game.left) => steps = Stream(steps.head.left) ++ steps
-      case dslprez.scala.game.right if canMove(steps.head,dslprez.scala.game.right) => steps = Stream(steps.head.right) ++ steps
-      case dslprez.scala.game.up if canMove(steps.head,dslprez.scala.game.up) => steps = Stream(steps.head.up) ++ steps
-      case dslprez.scala.game.down if canMove(steps.head,dslprez.scala.game.down) => steps = Stream(steps.head.down) ++ steps
+      case dslprez.scala.game.left if canMove(steps.head, dslprez.scala.game.left) => steps = Stream(steps.head.left) ++ steps
+      case dslprez.scala.game.right if canMove(steps.head, dslprez.scala.game.right) => steps = Stream(steps.head.right) ++ steps
+      case dslprez.scala.game.up if canMove(steps.head, dslprez.scala.game.up) => steps = Stream(steps.head.up) ++ steps
+      case dslprez.scala.game.down if canMove(steps.head, dslprez.scala.game.down) => steps = Stream(steps.head.down) ++ steps
       case _ => hasMoved = false
     }
     if (hasMoved) {
@@ -91,47 +98,57 @@ class Turtle(val name:String, val image: String, position: Position,val maze:Set
     this
   }
 
-  def print(what: Stream[Position]=steps) = new StreamPrinter(what,this)
+  def print(what: Stream[Position] = steps) = new StreamPrinter(what, this)
 
-  val questions = MutMap[String,String]()
+  val questions = MutMap[String, String]()
 
-  var lastQuestion:Option[String] = None
-  var lastAnswer:Option[String] = None
+  var lastQuestion: Option[String] = None
+  var lastAnswer: Option[String] = None
 
-  def getNewAsksAsJavaList = if (!lastQuestion.isEmpty && !lastAnswer.isEmpty) List(Map("_question"->lastQuestion.get,"answer"->lastAnswer.get).asJava).asJava else List().asJava
-  
-  /*val logWriter = {
-    val logFile = new java.io.File("/tmp/scalaAsk_"+name+".out")
-    new java.io.PrintWriter(logFile, "UTF-8")
-  }*/
-  
+  def getNewAsksAsJavaList = if (!lastQuestion.isEmpty && !lastAnswer.isEmpty) List(Map("_question" -> lastQuestion.get, "answer" -> lastAnswer.get).asJava).asJava else List().asJava
+
+    //val logWriter = {
+    //val logFile = new java.io.File("/tmp/scalaAsk_"+name+".out")
+    //new java.io.PrintWriter(logFile, "UTF-8")
+    //}
+
   def ask(question: String) = {
     lastQuestion = Some(question)
-    
+
     //logWriter.println("Question for "+name+" => "+question)
     //logWriter.flush()
     myAsk.ask(question, notifier)
   }
-  
-  def answer(answer:String) = {
-    if (lastQuestion.nonEmpty)  questions.put(lastQuestion.get,answer)
+
+  def answer(answer: String) = {
+    if (lastQuestion.nonEmpty) questions.put(lastQuestion.get, answer)
     lastAnswer = Some(answer)
-    
+
     //logWriter.println("Answer to "+name+" for the question "+lastQuestion.getOrElse("noQuestion")+" => "+answer)
     //logWriter.flush()
-    
+
     myAsk.answer(answer, notifier)
   }
-  
+
   def end() = {
     myAsk.end(notifier)
+  }
+
+  def kiss() = {}
+
+  def meet(x: Int, y: Int) = {
+    if (!maze.contains(x, y)) {
+      meetPoint = Some(new MeetPosition(x, y))
+    }
   }
 }
 
 object Turtle {
-  
+
+  def meet(x: Int, y: Int)(implicit t: Turtle) = t.meet(x, y)
+
   def startDsl(dsl: => Unit @cps[Unit])(implicit t: Turtle) = t.myAsk.start(dsl)
-  
+
   def end(implicit t: Turtle) = t.end()
-   
+
 }

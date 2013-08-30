@@ -9,9 +9,9 @@ import scala.collection.JavaConverters._
 // Avoid warning
 import scala.language.implicitConversions
 
-class StreamPrinter(val stream: Stream[Position],val t: Turtle) {
+class StreamPrinter(val stream: Stream[AbstractPosition],val t: Turtle) {
 
-  def toJavaList(l:List[Position]) = l.map(p => p.toMapStructure.asJava).asJava
+  def toJavaList(l:List[AbstractPosition]) = l.map(p => p.toMapStructure.asJava).asJava
   
   def to(p: PrintingMode) = p match {
     case `JavaList` => toJavaList(stream.reverse.toList)

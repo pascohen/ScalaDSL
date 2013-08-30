@@ -1,10 +1,14 @@
 package dslprez.scala.game
 
+abstract class AbstractPosition(val x:Int, val y:Int) {
+  def toMapStructure:Map[String,Any]
+}
+
 /**
  * Position contains position but also turtle
  * orientation
  */
-case class Position(x: Int, y: Int, direction: Direction) {
+case class Position(override val x: Int, override val y: Int, direction: Direction) extends AbstractPosition(x,y) {
 
   def left =  Position(x - 1, y, dslprez.scala.game.left)
   def right = Position(x + 1, y, dslprez.scala.game.right)
@@ -19,6 +23,10 @@ case class Position(x: Int, y: Int, direction: Direction) {
   }
   
   def toMapStructure = Map("x"->x,"y"->y,"rotation"->getRotation,"direction"->direction.asString)    
+}
+
+class MeetPosition(x:Int, y:Int) extends AbstractPosition(x,y) {
+    def toMapStructure = Map("x"->x,"y"->y)    
 }
 
 object Position {
