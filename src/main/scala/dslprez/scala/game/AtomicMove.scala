@@ -10,6 +10,7 @@ trait AtomicMove extends Move with Interact {
     } catch {
       case e:Exception => {
         steps = steps.splitAt(newStepsCount)._2
+        newStepsCount = 0
         throw e
       }
     }
