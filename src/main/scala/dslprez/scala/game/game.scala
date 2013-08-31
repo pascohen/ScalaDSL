@@ -9,7 +9,7 @@ package dslprez.scala {
       case "down" => dslprez.scala.game.down
       case "left" => dslprez.scala.game.left
       case "right" => dslprez.scala.game.right
-      case _ => throw new InvalidDirection()
+      case _ => throw new InvalidDirectionException
     }
    
     def toSet(a: Array[Array[Int]]) = (for (i<-0 until a.length;j<-0 until a(i).length if (a(i)(j) == 1)) yield (i,j)).toSet
