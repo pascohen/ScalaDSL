@@ -11,7 +11,7 @@ trait LimitedMove extends Move with Interact {
   
   private def checkAndIncrement() = {
    count += 1
-   println("Count is now "+count)
+   //println("Count is now "+count)
    if (count > maxActions) throw new TooManyActionsException
   }
   
