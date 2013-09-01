@@ -4,7 +4,7 @@ import scala.util.continuations._
 
 trait LimitedMove extends Move with Interact {
 
-  val maxActions = 5
+  val maxActions = 3
   var count = 0
 
   private def reset() = count = 0
