@@ -16,7 +16,7 @@ import scala.util.continuations._
  */
 class Turtle(val name: String, val image: String, position: OrientedPosition, val maze: Set[(Int, Int)], override val notifier: Notifier) extends Move with Interact {
 
-  def this(name: String, image: String, position: OrientedPosition, maze: Array[Array[Int]], groovyInstance: Object) = this(name, image, position, toSet(maze), new Notifier(groovyInstance))
+  private def this(name: String, image: String, position: OrientedPosition, maze: Array[Array[Int]], groovyInstance: Object) = this(name, image, position, toSet(maze), new Notifier(groovyInstance))
 
   def getName() = name
   
@@ -54,5 +54,8 @@ object Turtle {
   
   def getTurtle(name: String, image: String, position: OrientedPosition, maze: Array[Array[Int]], groovyInstance: Object) = 
     new Turtle(name,image,position,maze,groovyInstance) with LimitedMove with TimedMove with AtomicMove
+
+  def getTurtleWithoutAtomic(name: String, image: String, position: OrientedPosition, maze: Array[Array[Int]], groovyInstance: Object) = 
+    new Turtle(name,image,position,maze,groovyInstance) with LimitedMove with TimedMove
 
 }
