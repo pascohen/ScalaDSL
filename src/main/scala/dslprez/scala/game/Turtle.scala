@@ -20,9 +20,9 @@ class Turtle(val name: String, val image: String, position: OrientedPosition, va
 
   def getName() = name
   
-  override val myAsk = new Ask
+  val myAsk = new Ask
 
-  override var steps = position #:: Stream.empty
+  steps = position #:: Stream.empty
 
   private var meetPoint:Option[MeetPosition] = None
 

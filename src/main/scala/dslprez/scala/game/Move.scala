@@ -10,7 +10,7 @@ package dslprez.scala.game
 trait Move {
   def maze: Set[(Int,Int)]
 
-  var steps: Stream[OrientedPosition]
+  var steps: Stream[OrientedPosition] = _
    
   def lastPosition = steps.head
 
