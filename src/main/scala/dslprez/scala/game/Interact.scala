@@ -26,6 +26,8 @@ trait Interact {
   }
 
   def end() = {
+    lastQuestion = None
+    lastAnswer = None
     myAsk.end(notifier)
   }
   
