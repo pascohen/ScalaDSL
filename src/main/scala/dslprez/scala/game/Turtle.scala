@@ -26,11 +26,21 @@ class Turtle(val name: String, val image: String, position: OrientedPosition, va
 
   private var meetPoint:Option[MeetPosition] = None
 
-  def meet(x: Int, y: Int) = {
+  def meet(x: Int, y: Int):this.type = {
     if (!maze.contains(x, y)) {
       meetPoint = Some(new MeetPosition(x, y))
     }
+    this
   }
+  
+  def meet(s: String):this.type = {
+    val spl = s.split(',')
+    val x = spl.find { item => item.contains('x') }.get.split(':')(1).toInt
+    val y = spl.find { item => item.contains('y') }.get.split(':')(1).toInt
+
+    meet(x,y)
+  }
+
 
   def getNewStepsAsJavaList() = newSteps().reverse.map(p => p.toMapStructure.asJava).asJava
   

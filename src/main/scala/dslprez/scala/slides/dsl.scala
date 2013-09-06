@@ -21,11 +21,11 @@ case class Step(i: Int) {
  * Position contains position but also turtle
  * orientation
  */
-case class Position(x: Int, y: Int, d: Direction) {
-  def left = Position(x - 1, y, dslprez.scala.slides.left)
-  def right = Position(x + 1, y, dslprez.scala.slides.right)
-  def up = Position(x, y + 1, dslprez.scala.slides.up)
-  def down = Position(x, y - 1, dslprez.scala.slides.down)
+case class Position(x: Int, y: Int) {
+  def left = Position(x - 1, y)
+  def right = Position(x + 1, y)
+  def up = Position(x, y + 1)
+  def down = Position(x, y - 1)
 }
 
 /**
@@ -69,12 +69,6 @@ class Turtle(position: Position) {
     this
   }
 
-  def changeOrientation(newOrientation: Direction) = {
-    steps = Stream(steps.head.copy(d = newOrientation)) ++ steps
-    newStepsCount += 1
-    this
-  }
-
   def by(s: Step) = {
     for (d <- currentDirection; i <- 1 until s.i) move(d)
     currentDirection = None
@@ -93,20 +87,24 @@ class Turtle(position: Position) {
     this
   }
 
-  def print(what: Stream[Position]=steps) = new StreamPrinter(what)
+  def print = println("My current Position is "+lastPosition)
   
   def ask(question: String) = myAsk.ask(question)
   
 }
 
 object Turtle {
-  def answer(answer: String)(implicit t: Turtle) = t.myAsk.answer(answer)
+  var currentTurtle:Turtle = _
   
-  def startDsl(dsl: => Unit @cps[Unit])(implicit t: Turtle) = t.myAsk.start(dsl)
+  def print(implicit t: Turtle = currentTurtle) = t.print
+  def answer(answer: String)(implicit t: Turtle = currentTurtle) = t.myAsk.answer(answer)
   
-  def end(implicit t: Turtle) = t.myAsk.end
+  def startDsl(dsl: => Unit @cps[Unit])(implicit t: Turtle) = {
+    currentTurtle = t
+    t.myAsk.start(dsl)
+  }
+  def move(d:Direction)(implicit t: Turtle = currentTurtle) = t.move(d)
+  
+  def end(implicit t: Turtle = currentTurtle) = t.myAsk.end
 
 }
-
-sealed trait PrintingMode
-case object JSon extends PrintingMode
