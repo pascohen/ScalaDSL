@@ -33,14 +33,14 @@ class Turtle(val name: String, val image: String, position: OrientedPosition, va
     this
   }
   
+  /*
   def meet(s: String):this.type = {
     val spl = s.split(',')
     val x = spl.find { item => item.contains('x') }.get.split(':')(1).toInt
     val y = spl.find { item => item.contains('y') }.get.split(':')(1).toInt
 
     meet(x,y)
-  }
-
+  }*/
 
   def getNewStepsAsJavaList() = newSteps().reverse.map(p => p.toMapStructure.asJava).asJava
   
