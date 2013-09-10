@@ -22,7 +22,11 @@ case class OrientedPosition(override val x: Int, override val y: Int, direction:
     case dslprez.scala.game.down => 180
   }
   
-  def toMapStructure = Map("x"->x,"y"->y,"rotation"->getRotation,"direction"->direction.asString)    
+  def toMapStructure = Map("x"->x,"y"->y,"k"->0,"rotation"->getRotation,"direction"->direction.asString)    
+}
+
+class KissPosition(p:OrientedPosition) extends OrientedPosition(p.x,p.y,p.direction) {
+  override def toMapStructure = Map("x"->x,"y"->y,"k"->1,"rotation"->getRotation,"direction"->direction.asString) 
 }
 
 object Position {

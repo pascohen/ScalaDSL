@@ -33,6 +33,11 @@ class Turtle(val name: String, val image: String, position: OrientedPosition, va
     this
   }
   
+  def kiss:Unit = {
+    steps = Stream(new KissPosition(lastPosition)) ++ steps
+    newStepsCount += 1
+  }
+  
   /*
   def meet(s: String):this.type = {
     val spl = s.split(',')
