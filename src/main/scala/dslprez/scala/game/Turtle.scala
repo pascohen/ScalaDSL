@@ -33,7 +33,7 @@ class Turtle(val name: String, val image: String, position: OrientedPosition, va
     this
   }
   
-  def kiss:Unit = {
+  def kiss {
     steps = Stream(new KissPosition(lastPosition)) ++ steps
     newStepsCount += 1
   }
