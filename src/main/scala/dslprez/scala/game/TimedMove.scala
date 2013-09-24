@@ -26,11 +26,11 @@ trait TimedMove extends Move with Interact {
     result
   }
 
-  override def ask(question: String) = {
-    val result = super.ask(question)
-    val t = System.currentTimeMillis()
-    checkDuration(t)
-    result
-  }
+  // override def ask(question: String) = {
+  //   val result = super.ask(question)
+  //   val t = System.currentTimeMillis()
+  //   checkDuration(t)
+  //   result
+  // }
   
 }
