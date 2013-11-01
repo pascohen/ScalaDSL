@@ -83,7 +83,7 @@ class DslTest extends org.scalatest.FlatSpec {
       val t = new Turtle(Position(0,0,up))
       t move up
       t move right
-      val expectedJson = "{\"steps\":[{\"direction\":\"up\",\"x\":0,\"y\":0},{\"direction\":\"up\",\"x\":0,\"y\":1},{\"direction\":\"right\",\"x\":1,\"y\":1}]}"
+      val expectedJson = """{"steps":[{"direction":"up","x":0,"y":0},{"direction":"up","x":0,"y":1},{"direction":"right","x":1,"y":1}]}"""
       assert(t.print(t.steps).to(JSon)==expectedJson)  
     }
 }
