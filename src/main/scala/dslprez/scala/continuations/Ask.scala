@@ -27,9 +27,18 @@ class Ask {
 
    // get back into the DSL flow by calling the stored continuation
    def answer(answer:String) = {
-	if (!cont.isEmpty) cont.get(answer) 
-        //cont=None
+     if (!cont.isEmpty) cont.get(answer) 
+     //cont=None
    }
    
    def end = cont=None
+   /*
+    def end:Unit @cps[Unit] = {
+      shift { 
+         k: (Unit => Unit) => 
+            // Make the continuation available for call
+            cont = None 
+            k()
+        }
+   }*/
 }
